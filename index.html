@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DME · Call Script — In-Call Outsourcing</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23070710'/%3E%3Ctext y='.9em' font-size='72' x='50%25' dominant-baseline='middle' text-anchor='middle' font-family='serif'%3E%F0%93%82%80%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ── */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;width:100%;overflow:hidden}
+
+/* ── THEME VARS ── */
+[data-theme="dark"]{
+  --bg:#070710;--bg2:#0c0c1a;
+  --surface:#111120;--surface2:#17172a;--surface3:#1e1e34;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --text:#eeeef8;--text2:#8888aa;--text3:#44446a;
+  --topbar:rgba(7,7,16,0.92);
+  --shadow:0 12px 48px rgba(0,0,0,.6);--shadow-sm:0 2px 12px rgba(0,0,0,.4);
+  --A:#ff4d6d;--B:#4d9fff;--C:#00e5a0;--D:#b07aff;--W:#ffb340;
+  --gA:rgba(255,77,109,.15);--gB:rgba(77,159,255,.15);
+  --gC:rgba(0,229,160,.15);--gD:rgba(176,122,255,.15);
+  --rbrow:rgba(0,0,0,.18);--card:#16162a;
+}
+[data-theme="light"]{
+  --bg:#f3f3fb;--bg2:#ebebf8;
+  --surface:#fff;--surface2:#f7f7fe;--surface3:#eeeef9;
+  --border:rgba(0,0,0,.07);--border2:rgba(0,0,0,.12);
+  --text:#0e0e22;--text2:#52526e;--text3:#aaaacc;
+  --topbar:rgba(243,243,251,0.92);
+  --shadow:0 6px 28px rgba(0,0,40,.1);--shadow-sm:0 2px 8px rgba(0,0,40,.06);
+  --A:#d6003a;--B:#0050d8;--C:#006e4c;--D:#6d28d9;--W:#b06000;
+  --gA:rgba(214,0,58,.08);--gB:rgba(0,80,216,.08);
+  --gC:rgba(0,110,76,.08);--gD:rgba(109,40,217,.08);
+  --rbrow:rgba(0,0,0,.025);--card:#f0f0fc;
+}
+
+/* ── LOGIN ── */
+#LP{
+  position:fixed;inset:0;z-index:9999;
+  background:#070710;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .5s,transform .5s;
+}
+#LP.gone{opacity:0;transform:scale(1.04);pointer-events:none}
+#LP::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(77,159,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(77,159,255,.04) 1px,transparent 1px);
+  background-size:50px 50px;
+  animation:gs 22s linear infinite;
+}
+@keyframes gs{to{background-position:50px 50px}}
+.lw{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:22px}
+.ll{display:flex;flex-direction:column;align-items:center;gap:10px}
+.li{width:86px;height:86px;border-radius:18px;overflow:hidden;border:1px solid rgba(77,159,255,.2);box-shadow:0 0 40px rgba(77,159,255,.1),0 8px 32px rgba(0,0,0,.5)}
+.li img{width:100%;height:100%;object-fit:contain;background:#fff;display:block}
+.lc{font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:800;color:rgba(255,255,255,.9);letter-spacing:.1em;text-transform:uppercase}
+.lt{font-family:'Fira Code',monospace;font-size:.57rem;color:rgba(77,159,255,.65);letter-spacing:.15em;background:rgba(77,159,255,.08);border:1px solid rgba(77,159,255,.18);padding:3px 12px;border-radius:100px}
+.lb{width:370px;padding:36px 36px 32px;background:rgba(14,14,30,.93);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.65);position:relative;overflow:hidden}
+.lb::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(77,159,255,.45),transparent)}
+.lh{font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:800;text-align:center;margin-bottom:28px;background:linear-gradient(110deg,#fff 30%,#4d9fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ub{position:relative;margin-bottom:8px}
+.ub input{width:100%;padding:12px 0 10px;font-size:.93rem;font-family:'Plus Jakarta Sans',sans-serif;color:#fff;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.2);outline:none;transition:.4s;letter-spacing:.06em}
+.ub input:focus{border-bottom-color:#4d9fff}
+.ub label{position:absolute;top:12px;left:0;font-size:.88rem;color:rgba(255,255,255,.35);pointer-events:none;transition:.4s}
+.ub input:focus~label,.ub input:valid~label{top:-13px;font-size:.67rem;color:#4d9fff;letter-spacing:.1em}
+.lbtn{position:relative;display:block;width:100%;padding:13px 20px;margin-top:32px;font-family:'Outfit',sans-serif;font-weight:700;color:#fff;font-size:.87rem;text-align:center;text-transform:uppercase;letter-spacing:.18em;cursor:pointer;border:1px solid rgba(255,255,255,.22);border-radius:10px;background:transparent;overflow:hidden;transition:.4s}
+.lbtn:hover{background:rgba(77,159,255,.12);border-color:#4d9fff}
+.lbtn span{position:absolute;display:block}
+.lbtn span:nth-child(1){top:0;left:-100%;width:100%;height:2px;background:linear-gradient(90deg,transparent,#4d9fff);animation:la1 1.6s linear infinite}
+.lbtn span:nth-child(2){top:-100%;right:0;width:2px;height:100%;background:linear-gradient(180deg,transparent,#4d9fff);animation:la2 1.6s linear infinite .4s}
+.lbtn span:nth-child(3){bottom:0;right:-100%;width:100%;height:2px;background:linear-gradient(270deg,transparent,#4d9fff);animation:la3 1.6s linear infinite .8s}
+.lbtn span:nth-child(4){bottom:-100%;left:0;width:2px;height:100%;background:linear-gradient(360deg,transparent,#4d9fff);animation:la4 1.6s linear infinite 1.2s}
+@keyframes la1{0%{left:-100%}50%,100%{left:100%}}
+@keyframes la2{0%{top:-100%}50%,100%{top:100%}}
+@keyframes la3{0%{right:-100%}50%,100%{right:100%}}
+@keyframes la4{0%{bottom:-100%}50%,100%{bottom:100%}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.lerr{font-family:'Fira Code',monospace;font-size:.62rem;color:#ff4d6d;text-align:center;margin-top:12px;opacity:0;transition:opacity .3s;min-height:16px;letter-spacing:.04em}
+.lerr.on{opacity:1}
+.lwm{position:fixed;bottom:18px;right:20px;display:flex;align-items:center;gap:6px;opacity:.15;pointer-events:none;z-index:10000}
+.lwm .eye{font-size:1.1rem}
+.lwm .ra{font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:800;letter-spacing:.2em;color:#fff;border:1px solid rgba(255,255,255,.3);padding:2px 6px;border-radius:4px}
+
+/* ── APP SHELL — uses position:fixed so it doesn't fight with login ── */
+#APP{
+  position:fixed;inset:0;z-index:1;
+  display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;
+  transition:opacity .6s;
+}
+#APP.on{opacity:1;pointer-events:all}
+
+/* ── TOPBAR ── */
+#TB{
+  flex:0 0 54px;height:54px;
+  background:var(--topbar);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;
+  transition:background .4s,border-color .4s;
+}
+.tbl{display:flex;align-items:center;gap:14px}
+.tbrand{display:flex;align-items:center;gap:9px}
+.tlogo{width:30px;height:30px;border-radius:8px;overflow:hidden;border:1px solid var(--border2);flex-shrink:0}
+.tlogo img{width:100%;height:100%;object-fit:contain;background:#fff;display:block}
+.tname{font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text)}
+.tsep{width:1px;height:16px;background:var(--border2)}
+.ttag{font-family:'Fira Code',monospace;font-size:.56rem;color:var(--text3);letter-spacing:.1em;padding:3px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;transition:all .4s}
+.tbr{display:flex;align-items:center;gap:12px}
+.live{display:flex;align-items:center;gap:6px;background:var(--gC);border:1px solid rgba(0,229,160,.22);padding:4px 12px;border-radius:100px}
+[data-theme="light"] .live{border-color:rgba(0,110,76,.22)}
+.ldot{width:5px;height:5px;border-radius:50%;background:var(--C);animation:lr 1.8s ease-out infinite}
+@keyframes lr{0%{box-shadow:0 0 0 0 var(--C)}70%{box-shadow:0 0 0 6px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.ltxt{font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--C);font-weight:500}
+.prw{display:flex;align-items:center;gap:8px}
+.prt{width:96px;height:2px;background:var(--border2);border-radius:2px;overflow:hidden}
+.prf{height:100%;width:0%;background:linear-gradient(90deg,var(--A),var(--D));border-radius:2px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.prp{font-family:'Fira Code',monospace;font-size:.52rem;color:var(--text3);min-width:26px;text-align:right}
+.tog{width:54px;height:28px;border-radius:100px;background:var(--surface3);border:1px solid var(--border2);cursor:pointer;position:relative;display:flex;align-items:center;padding:3px;transition:all .35s;flex-shrink:0}
+.tog:hover{border-color:var(--text3)}
+.knob{width:22px;height:22px;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:transform .35s cubic-bezier(.34,1.5,.64,1),background .35s}
+[data-theme="dark"] .knob{transform:translateX(0);background:linear-gradient(135deg,#4d4d88,#22224a)}
+[data-theme="light"] .knob{transform:translateX(26px);background:linear-gradient(135deg,#ffe08a,#ffb340)}
+
+/* ── MAIN CONTENT AREA ── */
+#MAIN{
+  flex:1;min-height:0;
+  display:grid;
+  grid-template-columns:1fr 440px;
+}
+
+/* ── LEFT COLUMN ── */
+#LC{
+  overflow-y:auto;
+  padding:36px 30px 80px;
+  background:var(--bg);
+  border-right:1px solid var(--border2);
+  transition:background .4s,border-color .4s;
+}
+#LC::-webkit-scrollbar{width:3px}
+#LC::-webkit-scrollbar-track{background:transparent}
+#LC::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* Phase headers */
+.ph{display:flex;align-items:center;gap:10px;margin:50px 0 16px}
+.ph:first-child{margin-top:0}
+.phn{font-family:'Fira Code',monospace;font-size:.55rem;color:var(--text3);letter-spacing:.12em;padding:2px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;flex-shrink:0;transition:all .4s}
+.pht{font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:-.025em;flex-shrink:0}
+.phl{flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
+.ph[data-p="01"] .pht{background:linear-gradient(110deg,var(--text) 20%,var(--A));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ph[data-p="02"] .pht{background:linear-gradient(110deg,var(--text) 20%,var(--B));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ph[data-p="03"] .pht{background:linear-gradient(110deg,var(--text) 20%,var(--C));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ph[data-p="04"] .pht{background:linear-gradient(110deg,var(--text) 20%,var(--D));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Script blocks */
+.blk{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:16px;margin-bottom:10px;overflow:visible;
+  position:relative;
+  transition:border-color .25s,box-shadow .25s,transform .25s,background .4s;
+}
+.blk[data-p="01"]{border-left:2px solid rgba(255,77,109,.4)}
+.blk[data-p="02"]{border-left:2px solid rgba(77,159,255,.4)}
+.blk[data-p="03"]{border-left:2px solid rgba(0,229,160,.4)}
+.blk[data-p="04"]{border-left:2px solid rgba(176,122,255,.4)}
+.blk:hover{transform:scale(1.015) rotate(-0.4deg);box-shadow:var(--shadow);border-color:var(--text3)}
+@keyframes bIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.bd{padding:20px 22px 17px;font-size:.895rem;line-height:2.1;color:var(--text2);transition:color .4s}
+.bd b{font-weight:700;color:var(--text)}
+.go{font-family:'Outfit',sans-serif;font-weight:800;font-size:.93rem;color:var(--C)}
+.sl{font-family:'Fira Code',monospace;font-size:.75em;background:var(--gB);color:var(--B);border:1px solid rgba(77,159,255,.22);border-radius:6px;padding:1px 8px;transition:all .4s}
+.pp{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--W);margin:0 4px 2px;vertical-align:middle;animation:bk 2.5s ease-in-out infinite}
+@keyframes bk{0%,100%{opacity:.9;transform:scale(1)}50%{opacity:.15;transform:scale(.4)}}
+.tn{display:inline-flex;align-items:center;gap:4px;font-family:'Fira Code',monospace;font-size:.52rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:2px 9px 2px 6px;border-radius:100px;margin-left:4px;vertical-align:middle}
+.tn::before{content:'';width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.th{background:var(--gA);color:var(--A);border:1px solid rgba(255,77,109,.2)}.th::before{background:var(--A)}
+.ts{background:var(--gB);color:var(--B);border:1px solid rgba(77,159,255,.2)}.ts::before{background:var(--B)}
+.tw{background:var(--gC);color:var(--C);border:1px solid rgba(0,229,160,.2)}.tw::before{background:var(--C)}
+.tc{background:var(--gD);color:var(--D);border:1px solid rgba(176,122,255,.2)}.tc::before{background:var(--D)}
+.fl{display:flex;align-items:center;gap:7px;padding:8px 20px;font-size:.7rem;font-weight:600;border-top:1px solid var(--border);transition:all .4s}
+.fg{background:var(--gC);color:var(--C)}.fr{background:var(--gA);color:var(--A)}.fo{background:rgba(255,179,64,.09);color:var(--W)}
+
+/* Rebuttal button row */
+.rr{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px 14px;border-top:1px solid var(--border);background:var(--rbrow);transition:all .4s;overflow:visible}
+
+.rb{
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:.7rem;font-weight:700;
+  min-width:110px;height:72px;padding:0 12px;border-radius:14px;
+  border:1px solid var(--border2);background:var(--card);color:var(--text2);
+  cursor:pointer;position:relative;overflow:visible;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  flex:1;transition:transform .2s ease,box-shadow .2s,border-color .2s,background .4s;
+}
+.rbico{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:900;flex-shrink:0;z-index:1;transition:all .25s;font-family:'Outfit',sans-serif}
+.rblb{font-size:.64rem;font-weight:600;line-height:1.3;text-align:center;color:var(--text2);z-index:2;transition:color .2s}
+
+/* Tooltip */
+.rbtip{
+  position:absolute;bottom:calc(100% + 10px);left:50%;
+  transform:translateX(-50%) scale(.92);
+  width:220px;background:#0d0d22;
+  border:1px solid rgba(255,255,255,.12);border-radius:10px;
+  padding:10px 13px;font-size:.67rem;line-height:1.65;
+  color:#8888aa;font-family:'Plus Jakarta Sans',sans-serif;
+  pointer-events:none;opacity:0;
+  transition:opacity .2s,transform .2s;
+  z-index:9000;text-align:left;
+  box-shadow:0 8px 32px rgba(0,0,0,.6);
+}
+[data-theme="light"] .rbtip{background:#fff;color:#52526e;border-color:rgba(0,0,0,.12);box-shadow:0 8px 32px rgba(0,0,40,.12)}
+.rbtip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#0d0d22}
+[data-theme="light"] .rbtip::after{border-top-color:#fff}
+.tipttl{font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;color:#b07aff;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.tipttl::before{content:'💡';font-size:.7rem}
+.rb:hover .rbtip{opacity:1;transform:translateX(-50%) scale(1)}
+
+/* Card hover */
+.rb:hover{transform:scale(1.04) rotate(-1deg);border-color:var(--B);box-shadow:0 8px 28px var(--gB)}
+.rb:hover .rbico{width:28px;height:28px;filter:blur(5px);animation:fi 2.5s ease-in-out infinite}
+.rb:hover .rblb{color:var(--B)}
+@keyframes fi{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+.rb:active{transform:scale(.97)}
+.rb.on{border-color:var(--B)!important;background:rgba(77,159,255,.1)!important;box-shadow:0 0 0 1px rgba(77,159,255,.3),0 8px 24px var(--gB)!important}
+.rb.on .rbico{background:#4d9fff!important;color:#fff!important}
+.rb.on .rblb{color:var(--B)}
+
+.rb[data-p="01"] .rbico{background:var(--gA);color:var(--A);border:1px solid rgba(255,77,109,.25)}
+.rb[data-p="01"]:not(.on):hover{border-color:var(--A)!important;box-shadow:0 8px 28px var(--gA)!important}
+.rb[data-p="01"]:not(.on):hover .rblb{color:var(--A)}
+.rb[data-p="02"] .rbico{background:var(--gB);color:var(--B);border:1px solid rgba(77,159,255,.25)}
+.rb[data-p="03"] .rbico{background:var(--gC);color:var(--C);border:1px solid rgba(0,229,160,.25)}
+.rb[data-p="03"]:not(.on):hover{border-color:var(--C)!important;box-shadow:0 8px 28px var(--gC)!important}
+.rb[data-p="03"]:not(.on):hover .rblb{color:var(--C)}
+.rb[data-p="04"] .rbico{background:var(--gD);color:var(--D);border:1px solid rgba(176,122,255,.25)}
+.rb[data-p="04"]:not(.on):hover{border-color:var(--D)!important;box-shadow:0 8px 28px var(--gD)!important}
+.rb[data-p="04"]:not(.on):hover .rblb{color:var(--D)}
+
+/* ── RIGHT REBUTTAL COLUMN ── */
+#RC{background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;transition:background .4s}
+.rh{flex-shrink:0;padding:14px 22px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:var(--surface);transition:all .4s}
+.rhl{display:flex;align-items:center;gap:8px}
+.rhico{width:26px;height:26px;border-radius:8px;background:var(--gB);border:1px solid rgba(77,159,255,.25);display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.rhlb{font-family:'Outfit',sans-serif;font-size:.63rem;font-weight:700;letter-spacing:.17em;text-transform:uppercase;color:var(--text2)}
+.rhht{font-family:'Fira Code',monospace;font-size:.52rem;color:var(--text3);letter-spacing:.06em}
+.rb-body{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;min-height:0}
+.rb-body::-webkit-scrollbar{width:3px}
+.rb-body::-webkit-scrollbar-track{background:transparent}
+.rb-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+.re{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+.rec{width:110px;height:110px;border-radius:20px;background:var(--surface);border:1px solid var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;cursor:default;transition:all .2s}
+.rec:hover{transform:scale(1.04) rotate(-1deg);box-shadow:var(--shadow);border-color:var(--text3)}
+.reico{font-size:1.8rem;transition:all .2s;z-index:1}
+.rec:hover .reico{filter:blur(4px);animation:fi 2.5s ease-in-out infinite}
+.relb{opacity:0;font-family:'Outfit',sans-serif;font-size:.68rem;font-weight:700;color:var(--text2);position:absolute;transition:opacity .2s}
+.rec:hover .relb{opacity:1}
+.re h3{font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;color:var(--text2)}
+.re p{font-size:.67rem;color:var(--text3);max-width:148px;line-height:1.7;font-family:'Fira Code',monospace}
+
+.rp{display:none;flex-direction:column;gap:16px}
+.rp.show{display:flex;animation:rpin .28s cubic-bezier(.34,1.2,.64,1)}
+@keyframes rpin{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+.rcr{display:flex;justify-content:flex-end}
+.rcls{background:var(--surface3);border:1px solid var(--border2);color:var(--text3);cursor:pointer;font-family:'Fira Code',monospace;font-size:.55rem;letter-spacing:.1em;padding:5px 13px;border-radius:100px;display:flex;align-items:center;gap:5px;transition:all .18s}
+.rcls::before{content:'✕';font-size:.58rem}
+.rcls:hover{background:var(--gA);border-color:rgba(255,77,109,.3);color:var(--A)}
+.rql{font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--B);margin-bottom:5px}
+.rqt{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);line-height:1.3;letter-spacing:-.02em}
+.rdv{height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
+.ra{font-size:.855rem;line-height:2;color:var(--text2)}
+.ra b{color:var(--text);font-weight:700}
+.ra i{color:var(--C);font-style:normal;font-weight:600}
+.ra .sl{font-family:'Fira Code',monospace;font-size:.76em;background:var(--gB);color:var(--B);border:1px solid rgba(77,159,255,.22);border-radius:5px;padding:1px 7px}
+.ra .opt{display:flex;align-items:center;gap:8px;font-family:'Fira Code',monospace;font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;color:var(--D);margin:20px 0 8px;padding-top:18px;border-top:1px dashed var(--border2)}
+.ra .opt::before{content:'';width:10px;height:1px;background:var(--D);opacity:.6;flex-shrink:0}
+.ra .opt:first-child{margin-top:0;padding-top:0;border-top:none}
+.rn{display:flex;align-items:flex-start;gap:9px;padding:11px 14px;border-radius:10px;font-size:.73rem;font-weight:600;line-height:1.6}
+.rng{background:var(--gC);color:var(--C);border:1px solid rgba(0,229,160,.2)}
+.rno{background:rgba(255,179,64,.08);color:var(--W);border:1px solid rgba(255,179,64,.2)}
+.rng::before{content:'→'}.rno::before{content:'⚠'}
+.rn::before{font-size:.9rem;flex-shrink:0;margin-top:1px}
+
+/* App watermark */
+.awm{position:fixed;bottom:14px;right:18px;display:flex;align-items:center;gap:6px;opacity:.08;pointer-events:none;z-index:50;filter:grayscale(.8)}
+.awm .eye{font-size:1rem}
+.awm .ra2{font-family:'Outfit',sans-serif;font-size:.55rem;font-weight:800;letter-spacing:.25em;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="LP">
+  <div class="lw">
+    <div class="ll">
+      <div class="li"><img src="data:image/png;base64,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" alt="In-Call Outsourcing"></div>
+      <div class="lc">In-Call Outsourcing</div>
+      <div class="lt">Opening Script &middot; DME</div>
+    </div>
+    <div class="lb">
+      <div class="lh">Agent Access</div>
+      <div class="ub">
+        <input type="password" id="pi" required autocomplete="off">
+        <label>Password</label>
+      </div>
+      <button class="lbtn" onclick="doLogin()">
+        <span></span><span></span><span></span><span></span>Enter
+      </button>
+      <div class="lerr" id="le">&#8856;&nbsp; Incorrect password</div>
+    </div>
+  </div>
+  <div class="lwm"><span class="eye">𓂀</span><span class="ra">RA</span></div>
+</div>
+
+<!-- APP -->
+<div id="APP">
+  <!-- TOPBAR -->
+  <div id="TB">
+    <div class="tbl">
+      <div class="tbrand">
+        <div class="tlogo"><img src="data:image/png;base64,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" alt="logo"></div>
+        <span class="tname">In-Call Outsourcing</span>
+      </div>
+      <div class="tsep"></div>
+      <span class="ttag">DME &middot; Opening Script</span>
+    </div>
+    <div class="tbr">
+      <div class="live"><div class="ldot"></div><span class="ltxt">Live</span></div>
+      <div class="prw">
+        <div class="prt"><div class="prf" id="pf"></div></div>
+        <span class="prp" id="pp">0%</span>
+      </div>
+      <button class="tog" id="tg" title="Toggle theme"><div class="knob"><span id="ti">&#x1F319;</span></div></button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="MAIN">
+
+    <!-- LEFT SCRIPT -->
+    <div id="LC">
+
+      <div class="ph" data-p="01"><span class="phn">01</span><span class="pht">Opening</span><div class="phl"></div></div>
+
+      <div class="blk" data-p="01">
+        <div class="bd">
+          Hello <span class="sl">PT Name</span>, you hear me!! <span class="pp"></span>
+          <span class="tn th">High &amp; Mysterious</span><br><br>
+          This is <span class="sl">Agent Name</span> <span class="pp"></span>
+          from <b>PATIENT CARE SERVICES</b> <span class="pp"></span>
+          &mdash; how are you <span class="sl">PT Name</span>?!
+        </div>
+        <div class="fl fg">&#10003;&nbsp; Be Responsive &mdash; match their energy immediately</div>
+        <div class="rr">
+          <button class="rb" data-k="how_info" data-p="01"><div class="rbico">𓂀</div><span class="rblb">How did you get my info?</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Stay calm &amp; credible. Mention "records" &amp; "surveys" — never say "purchased list." Keep moving forward right after.</div></button>
+          <button class="rb" data-k="why_calling" data-p="01"><div class="rbico">𓂀</div><span class="rblb">Why are you calling?</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Reframe as a benefits update, not a sales call. Use "we're calling YOU" — makes them feel selected, not targeted.</div></button>
+          <button class="rb" data-k="medicare_assoc" data-p="01"><div class="rbico">𓂀</div><span class="rblb">Are you with Medicare?</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Deny clearly — then pivot straight to their benefit. Confusion = lost call. Be sharp &amp; confident here.</div></button>
+          <button class="rb" data-k="not_interested" data-p="01"><div class="rbico">𓂀</div><span class="rblb">Not interested?</span><div class="rbtip"><div class="tipttl">Sales Tip</div>"Not interested" often means "I don't understand yet." Restate: FREE, this is THEIRS. Never argue — reframe fast.</div></button>
+        </div>
+      </div>
+
+      <div class="blk" data-p="01">
+        <div class="bd">
+          We&rsquo;re calling you today <span class="pp"></span> as you are a
+          <b>MEDICARE HOLDER</b> <span class="pp"></span><span class="pp"></span>
+          because it&rsquo;s mentioned here on your <b>RECORDS</b> <span class="pp"></span>
+          that you <b>DO</b> have some slight <b>PAIN or DISCOMFORT</b>
+          around your back sometimes <span class="pp"></span>
+          &mdash; <span class="go">CORRECT !!</span>
+        </div>
+        <div class="fl fr">&#8856;&nbsp; NEVER ask about other pain areas here &mdash; back only</div>
+        <div class="fl fg">&#10003;&nbsp; Show Empathy &mdash; slow your voice, pause before CORRECT</div>
+        <div class="rr">
+          <button class="rb" data-k="no_pain" data-p="01"><div class="rbico">𓂀</div><span class="rblb">I don&rsquo;t have any pain</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Don't argue. Soften to "slight discomfort." Everyone has some — use weather, effort, age angles. Then probe other joints.</div></button>
+          <button class="rb" data-k="where_located" data-p="01"><div class="rbico">𓂀</div><span class="rblb">Where are you located?</span><div class="rbtip"><div class="tipttl">Sales Tip</div>This is a trust-test. Say "offshore, phone-based" quickly and redirect. Every second here is a lost sale.</div></button>
+        </div>
+      </div>
+
+      <div class="blk" data-p="01">
+        <div class="bd">
+          That&rsquo;s why you&rsquo;re receiving this call today <span class="sl">PT Name</span>
+          <span class="pp"></span> based on your condition in your <span class="sl">PAIN AREA</span>
+          <span class="pp"></span> &mdash; you&rsquo;re qualified by Medicare to receive the
+          <b>COOLMAX BACK SUPPORT</b> <span class="pp"></span>
+          which will be <b>covered for you by Medicare</b> <span class="pp"></span>
+          and as I can see here you didn&rsquo;t receive it yet <span class="pp"></span>
+          &mdash; <span class="go">CORRECT !!</span> <span class="tn tc">Confident</span>
+        </div>
+      </div>
+
+      <div class="blk" data-p="01">
+        <div class="bd">
+          Let me tell you what it looks like as per your Dr&rsquo;s recommendation
+          <span class="pp"></span> &mdash; It&rsquo;s a <b>PROTECTIVE SOFT BELT</b> around your
+          <span class="sl">PAIN AREA</span> <span class="pp"></span>
+          with <b>NO metal parts</b> <span class="pp"></span>
+          &mdash; made of <b>FLEXIBLE / BREATHABLE MEDICAL FIBERS</b> called <b>COOLMAX</b>
+          <span class="pp"></span> &mdash; keeps your <span class="sl">PAIN AREA</span>
+          dry all the time, doesn&rsquo;t sweat even when worn for a long time.<br><br>
+          Wear it for a couple of minutes whenever you feel the pain
+          <span class="pp"></span> &mdash; aligns the spine, reduces disc pressure
+          <span class="pp"></span> &mdash; So I got your Name is&hellip;
+          <span class="go">CORRECT !!</span>
+          <span class="tn ts">&#8595; Slow</span>
+          <span class="tn tw">Warm</span>
+        </div>
+      </div>
+
+      <div class="ph" data-p="02"><span class="phn">02</span><span class="pht">Sizing &amp; Eligibility</span><div class="phl"></div></div>
+
+      <div class="blk" data-p="02">
+        <div class="bd">
+          By the way <span class="sl">PT Name</span> <span class="pp"></span>
+          &mdash; it may also be made of <b>SYNTHETIC RUBBER</b> called <b>NEOPRENE</b>
+          <span class="pp"></span> &mdash; corrects your posture, makes you feel like you
+          have extra muscles in your <span class="sl">PAIN AREA</span>
+          <span class="pp"></span> &mdash; improves blood circulation, hidden under clothes
+          <span class="pp"></span><br><br>
+          To make sure the support fits you perfectly <span class="pp"></span><br>
+          <b>How much do you Weigh and how Tall are you?!</b>
+        </div>
+        <div class="fl fr">&#8856;&nbsp; Do NOT push for other pain areas here</div>
+        <div class="rr">
+          <button class="rb" data-k="refuse_sizes" data-p="02"><div class="rbico">𓂀</div><span class="rblb">Refuses to give sizes</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Frame it as "we need the right SIZE, not personal info." Say roughly — removes pressure. Objection here = still listening.</div></button>
+          <button class="rb" data-k="if_free_send" data-p="02"><div class="rbico">𓂀</div><span class="rblb">If it&rsquo;s free just send it</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Great sign — they want it! Confirm it's covered by Medicare, not "free." Keep rolling — don't let them stall on logistics.</div></button>
+          <button class="rb" data-k="how_much_cost" data-p="02"><div class="rbico">𓂀</div><span class="rblb">How much does it cost?</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Never say "free" — say "covered benefit." Separates it from a giveaway and keeps it credible. Reinforce Part A &amp; B coverage.</div></button>
+        </div>
+      </div>
+
+      <div class="blk" data-p="02">
+        <div class="bd">
+          It suits a wide range of body types <span class="pp"></span>
+          &mdash; stretchable, will <b>NOT</b> get tight or loose <span class="pp"></span><br><br>
+          Everything is perfect on my system <span class="pp"></span>
+          &mdash; <b>shipping and handling fees covered</b> as well <span class="pp"></span><br><br>
+          Date Of Birth: <span class="sl">&hellip;&hellip;&hellip;</span> &mdash; <span class="go">RIGHT ?</span><br>
+          Shipping Address: <span class="sl">&hellip;&hellip;&hellip;</span> &mdash; <span class="go">CORRECT ?</span><br>
+          Best phone number: <span class="sl">&hellip;&hellip;&hellip;</span> &mdash; <span class="go">RIGHT ?</span><br><br>
+          From <b>ONE to TEN</b> <span class="pp"></span>
+          &mdash; how much do you rate your pain at its worst?
+        </div>
+        <div class="rr">
+          <button class="rb" data-k="no_info_phone" data-p="02"><div class="rbico">𓂀</div><span class="rblb">Won&rsquo;t give info over phone</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Validate their caution first — then separate Medicare ID from "personal info." Hospital/pharmacy analogy is very effective.</div></button>
+          <button class="rb" data-k="scammed_before" data-p="02"><div class="rbico">𓂀</div><span class="rblb">I was scammed before</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Empathize hard — this is emotional. Agree with caution, then draw a clear line: SSN = never, Medicare ID = safe &amp; medical only.</div></button>
+          <button class="rb" data-k="dont_need_it" data-p="02"><div class="rbico">𓂀</div><span class="rblb">I don&rsquo;t need it</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Remind them: it's a benefit they've PAID for. "Once every 5 years" creates urgency. They don't have to wear it all day.</div></button>
+          <button class="rb" data-k="already_doctor" data-p="02"><div class="rbico">𓂀</div><span class="rblb">I already have a doctor</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Use it as a strength — HIPAA means a doctor must approve. Having a doctor = great news. Flip it into credibility.</div></button>
+        </div>
+      </div>
+
+      <div class="ph" data-p="03"><span class="phn">03</span><span class="pht">SNS &mdash; Other Braces</span><div class="phl"></div></div>
+
+      <div class="blk" data-p="03">
+        <div class="bd">
+          Just to do it all in one shot &mdash; beside the pain in your lower back
+          <span class="pp"></span> do you feel pain in your <b>KNEES</b> sometimes?&hellip;<br>
+          How about your <b>ANKLES</b> when you walk for a while?&hellip;<br>
+          Your <b>SHOULDERS or ELBOWS</b> when you move them around?&hellip;
+        </div>
+        <div class="fl fg">&#10003;&nbsp; Copy &amp; Paste SNS Results directly to the Main Form</div>
+      </div>
+
+      <div class="ph" data-p="04"><span class="phn">04</span><span class="pht">Warm Transfer</span><div class="phl"></div></div>
+
+      <div class="blk" data-p="04">
+        <div class="bd">
+          <span class="tn ts" style="margin-left:0;margin-bottom:12px;display:inline-flex">DR CHASING</span><br><br>
+          Everything is perfect now <span class="pp"></span>
+          &mdash; I&rsquo;ll let you speak to the <b>verification team</b> <span class="pp"></span>
+          &mdash; they&rsquo;ll verify <b>YOUR INFORMATION</b> <span class="pp"></span>
+          and tell you when you&rsquo;ll receive your support <span class="pp"></span>
+          &mdash; <span class="go">HOLD ON ONE MOMENT&hellip;</span>
+          <span class="tn ts">&#8595; Slowly</span>
+        </div>
+        <div class="fl fo">!&nbsp; Never be silent &mdash; keep talking during the transfer</div>
+      </div>
+
+      <div class="blk" data-p="04">
+        <div class="bd">
+          <span class="tn tc" style="margin-left:0;margin-bottom:12px;display:inline-flex">TELEMED</span><br><br>
+          Everything is perfect now <span class="pp"></span>
+          &mdash; I&rsquo;ll let you speak to the <b>verification team</b> <span class="pp"></span>
+          &mdash; they&rsquo;ll verify some <b>SIMPLE MEDICAL QUESTIONS</b> <span class="pp"></span>
+          then transfer you to the <b>shipping team</b> <span class="pp"></span>
+          &mdash; whole process is <b>5&ndash;7 mins MAX</b> <span class="pp"></span>
+          &mdash; please be patient &mdash; <span class="go">HOLD ON ONE MOMENT&hellip;</span>
+        </div>
+      </div>
+
+      <div class="blk" data-p="04">
+        <div class="bd">
+          Hi <span class="sl">Verifier Name</span> <span class="pp"></span>
+          &mdash; I have <span class="sl">PT Name</span> on the line for the support
+          <span class="pp"></span> &mdash; can you take him/her?<br>
+          <span style="color:var(--text3);font-size:.82rem;font-style:italic">&hellip;Verifier says yes&hellip;</span><br><br>
+          <span class="sl">PT Name</span> can you hear me?
+          <span style="color:var(--text3);font-size:.82rem;font-style:italic">&hellip;PT says yes&hellip;</span><br>
+          You have <span class="sl">Verifier Name</span> &mdash; he/she will help you receive
+          your support <span class="pp"></span>
+          &mdash; please be patient &mdash; say hello now&hellip;
+        </div>
+        <div class="fl fg">&#10003;&nbsp; Leave the 3-way call after hearing them talk together</div>
+      </div>
+
+    </div><!-- /LC -->
+
+    <!-- RIGHT REBUTTAL -->
+    <div id="RC">
+      <div class="rh">
+        <div class="rhl"><div class="rhico">&#x1F4AC;</div><span class="rhlb">Rebuttals</span></div>
+        <span class="rhht">click card &rarr; open script</span>
+      </div>
+      <div class="rb-body" id="RB">
+        <div class="re" id="RE">
+          <div class="rec"><div class="reico">&#127919;</div><div class="relb">Click one!</div></div>
+          <h3>Ready for objections</h3>
+          <p>Click any card button in the script</p>
+        </div>
+
+        <div class="rp" id="rp-how_info"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"How did you get my information?"</div></div><div class="rdv"></div><div class="ra"><span class="sl">PT Name</span>, it&rsquo;s been obtained through different sources such as phone surveys and so on &mdash; that&rsquo;s why we got the medical information for most seniors who are insured under Medicare and might be having some joint pain&hellip; just the way you are&hellip; <i>(as I was saying)</i>.</div></div>
+
+        <div class="rp" id="rp-why_calling"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Why are you calling me?"</div></div><div class="rdv"></div><div class="ra">As we mentioned before, we&rsquo;re calling today to update you with your benefits &mdash; as you are entitled to receive them from Medicare.</div></div>
+
+        <div class="rp" id="rp-medicare_assoc"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Are you associated with Medicare?"</div></div><div class="rdv"></div><div class="ra">Absolutely, we&rsquo;re <b>NOT</b> associated with Medicare &mdash; we help seniors over the phone who have pain in their joints to receive their benefits <i>from</i> Medicare. That&rsquo;s exactly why we&rsquo;re calling you today since you have this pain in <span class="sl">PAIN AREA</span>&hellip; <i>CORRECT !!</i></div></div>
+
+        <div class="rp" id="rp-not_interested"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Not interested / Sales call?"</div></div><div class="rdv"></div><div class="ra">We are <b>NOT</b> selling you anything. It&rsquo;s just a <b>free service call</b> according to your health insurance&rsquo;s benefits &mdash; as you are a Medicare holder, <i>Correct!</i></div></div>
+
+        <div class="rp" id="rp-no_pain"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I don&rsquo;t have any pain"</div></div><div class="rdv"></div><div class="ra">I&rsquo;m <b>NOT</b> talking about severe pain &mdash; I mean the slight pain that comes and goes, the usual one we all feel when doing extra effort or when the weather gets cold&hellip; I&rsquo;m sure you feel it sometimes, <i>Right!</i><span class="opt">&mdash; Still No Pain?</span>Ohhh, that&rsquo;s why I can see you receive many calls every day by different people asking the same thing, <i>Correct!</i>&hellip;<br><br>Let me modify it in our system so you will <b>NOT</b> be called again&hellip; Just one moment&hellip; So you&rsquo;re saying you have <b>absolutely no pain</b> in your back, <i>Correct?!</i><br><br><span style="color:var(--text3);font-style:italic">(as if talking to yourself)</span> &mdash; how about your <b>Knees</b>?&hellip; your <b>Ankles</b> when walking?&hellip; your <b>Wrists</b> while washing dishes?&hellip; your <b>Elbows or Shoulders</b>?</div><div class="rn rng">Write every new pain area in the comment for colleagues</div></div>
+
+        <div class="rp" id="rp-where_located"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Where are you located?"</div></div><div class="rdv"></div><div class="ra">We&rsquo;re an <b>offshore company</b> that moves fast from state to state over the phone to cover all states&hellip; Since we&rsquo;re in 2024 it&rsquo;s a lot faster over the phone&hellip; <i>(as I was saying)</i>.</div><div class="rn rno">Only if patient insists &mdash; you may say HQ is in Egypt</div></div>
+
+        <div class="rp" id="rp-refuse_sizes"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Refuses to give sizes"</div></div><div class="rdv"></div><div class="ra">We&rsquo;re <b>NOT</b> even allowed to ask personal questions &mdash; we already have your basic info. We&rsquo;re simply adding your sizes so we can send you the <b>right support</b> to your doorstep.<br><br>So, <i>roughly</i> &mdash; how much do you Weigh and how Tall are you?!</div><div class="rn rng">Ask about Shoe Size if PT needs Ankles support</div></div>
+
+        <div class="rp" id="rp-if_free_send"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"If it&rsquo;s free, just send it"</div></div><div class="rdv"></div><div class="ra">It&rsquo;s <b>covered for you</b> by your Medicare health insurance &mdash; as you have Part A and Part B active. Even the shipping and handling fees are all covered as well.</div></div>
+
+        <div class="rp" id="rp-how_much_cost"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"How much does it cost?"</div></div><div class="rdv"></div><div class="ra">Sir, the supports are <b>NOT free nor for sale</b> &mdash; there&rsquo;s no price list. It&rsquo;s part of your <b>benefits</b> as a Medicare senior. You&rsquo;re qualified to get them covered with <b>no delivery fees</b>.</div></div>
+
+        <div class="rp" id="rp-already_doctor"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I already have a doctor"</div></div><div class="rdv"></div><div class="ra">Absolutely &mdash; most seniors have doctors too. But this support will <b>NOT cause any allergies</b>, nor side effects like painkillers or over-the-counter medications.<br><br>However, according to <b>HIPAA law</b>, we <b>CANNOT</b> send you anything unless a Licensed or Primary doctor approves it.</div></div>
+
+        <div class="rp" id="rp-dont_need_it"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I don&rsquo;t need it"</div></div><div class="rdv"></div><div class="ra">Actually this is your <b>covered benefit</b> &mdash; through your medical health insurance that you&rsquo;ve been paying for. You&rsquo;re entitled to receive it <b>once every five years</b>&hellip; to support your spine against sliding or slipping.<br><br>And you don&rsquo;t have to wear it all day &mdash; just <b>15 to 30 minutes</b> whenever you feel the pain.</div></div>
+
+        <div class="rp" id="rp-no_info_phone"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I don&rsquo;t give info over the phone!!"</div></div><div class="rdv"></div><div class="ra"><span class="opt">&mdash; Option 1</span>Absolutely &mdash; always be cautious. But we&rsquo;re <b>NOT</b> asking for personal info &mdash; we&rsquo;re just <i>confirming</i> your basic info to make sure I&rsquo;m speaking to the primary cardholder. Please confirm your Medicare ID number from left to right.<span class="opt">&mdash; Option 2</span>Your Medicare claim number is just your <i>identification number</i> &mdash; an 11-character mix of letters and numbers &mdash; <b>nothing to do</b> with personal or financial info. That&rsquo;s why Medicare changed old cards (with SSN) to new ones&hellip;<span class="opt">&mdash; Option 3</span><span class="sl">Customer Name</span> I understand. However, we&rsquo;re on an irregular line &mdash; all calls are <b>monitored and recorded</b> for your security. No financial or banking info ever discussed.<span class="opt">&mdash; Option 4</span>When you go to a hospital or pharmacy you show your Medicare card, <i>Right?!</i>&hellip; Same here &mdash; we only identify you on Medicare to confirm you&rsquo;re qualified and eligible.</div></div>
+
+        <div class="rp" id="rp-scammed_before"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I was scammed before"</div></div><div class="rdv"></div><div class="ra">I totally understand &mdash; most seniors have been scammed too, and I&rsquo;m telling you right now &mdash; <b>never</b> give your <i>social security number</i> over the phone to anyone for any reason.<br><br>But the <b>new Medicare ID number</b> is only related to your <i>medical benefits</i>&hellip; It became easier for all seniors to receive their annual benefits over the phone&hellip; take your time and confirm it please.</div></div>
+
+      </div>
+    </div><!-- /RC -->
+
+  </div><!-- /MAIN -->
+
+  <div class="awm"><span class="eye">𓂀</span><span class="ra2">RA</span></div>
+</div><!-- /APP -->
+
+<script>
+const PASS = 'J8!bD2@wS9#K5mR3';
+
+/* LOGIN */
+function doLogin(){
+  const v = document.getElementById('pi').value;
+  const err = document.getElementById('le');
+  if(v === PASS){
+    document.getElementById('LP').classList.add('gone');
+    document.getElementById('APP').classList.add('on');
+  } else {
+    err.classList.add('on');
+    document.getElementById('pi').value = '';
+    document.getElementById('pi').focus();
+    setTimeout(()=>err.classList.remove('on'), 2800);
+    const lb = document.querySelector('.lb');
+    lb.style.animation = 'shake .35s ease';
+    setTimeout(()=>lb.style.animation='', 400);
+  }
+}
+document.getElementById('pi').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+/* BLOCKS — stagger animation, applied via JS so works for any number of blocks */
+document.querySelectorAll('.blk').forEach((b,i)=>{
+  b.style.opacity = '0';
+  b.style.transform = 'translateY(16px)';
+  setTimeout(()=>{
+    b.style.transition = 'opacity .45s ease, transform .45s cubic-bezier(.34,1.2,.64,1), border-color .25s, box-shadow .25s, background .4s';
+    b.style.opacity = '1';
+    b.style.transform = 'translateY(0)';
+  }, 80 + i * 60);
+});
+
+/* REBUTTALS */
+let curK = null, curB = null;
+document.getElementById('LC').addEventListener('click', e=>{
+  const b = e.target.closest('.rb'); if(!b) return;
+  const k = b.dataset.k;
+  if(curK === k){ closeRb(); return; }
+  openRb(k, b);
+});
+function openRb(k, btn){
+  document.getElementById('RE').style.display = 'none';
+  document.querySelectorAll('.rp').forEach(p=>{ p.classList.remove('show'); p.style.display='none'; });
+  if(curB) curB.classList.remove('on');
+  const p = document.getElementById('rp-'+k); if(!p) return;
+  p.style.display = 'flex'; void p.offsetWidth; p.classList.add('show');
+  btn.classList.add('on'); curB = btn; curK = k;
+  document.getElementById('RB').scrollTo({top:0, behavior:'smooth'});
+}
+function closeRb(){
+  document.querySelectorAll('.rp').forEach(p=>{ p.classList.remove('show'); setTimeout(()=>p.style.display='none', 260); });
+  if(curB) curB.classList.remove('on');
+  document.getElementById('RE').style.display = '';
+  curK = null; curB = null;
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeRb(); });
+document.querySelectorAll('.rp').forEach(p=>p.style.display='none');
+
+/* PROGRESS */
+const lc = document.getElementById('LC');
+const pf = document.getElementById('pf');
+const pp = document.getElementById('pp');
+lc.addEventListener('scroll', ()=>{
+  const pct = Math.min(100, Math.round((lc.scrollTop / (lc.scrollHeight - lc.clientHeight)) * 100) || 0);
+  pf.style.width = pct + '%';
+  pp.textContent = pct + '%';
+});
+
+/* THEME */
+let dark = true;
+const html = document.documentElement;
+const ti = document.getElementById('ti');
+try{ if(localStorage.getItem('dme-t')==='light'){ dark=false; html.setAttribute('data-theme','light'); ti.textContent='☀️'; } }catch(e){}
+document.getElementById('tg').addEventListener('click', ()=>{
+  dark = !dark;
+  html.setAttribute('data-theme', dark?'dark':'light');
+  ti.textContent = dark ? '🌙' : '☀️';
+  try{ localStorage.setItem('dme-t', dark?'dark':'light'); }catch(e){}
+});
+</script>
+</body>
+</html>
