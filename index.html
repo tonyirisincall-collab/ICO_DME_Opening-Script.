@@ -157,6 +157,10 @@ html,body{height:100%;width:100%;overflow:hidden}
 .ph[data-p="02"] .pht{background:linear-gradient(110deg,var(--text) 20%,var(--B));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .ph[data-p="03"] .pht{background:linear-gradient(110deg,var(--text) 20%,var(--C));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .ph[data-p="04"] .pht{background:linear-gradient(110deg,var(--text) 20%,var(--D));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ph[data-p="05"] .pht{background:linear-gradient(110deg,var(--text) 20%,var(--W));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ph[data-p="06"] .pht{background:linear-gradient(110deg,var(--text) 20%,var(--C));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ph[data-p="05"] .pht{background:linear-gradient(110deg,var(--text) 20%,var(--W));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ph[data-p="06"] .pht{background:linear-gradient(110deg,var(--text) 20%,var(--C));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
 /* Script blocks */
 .blk{
@@ -169,6 +173,10 @@ html,body{height:100%;width:100%;overflow:hidden}
 .blk[data-p="02"]{border-left:2px solid rgba(77,159,255,.4)}
 .blk[data-p="03"]{border-left:2px solid rgba(0,229,160,.4)}
 .blk[data-p="04"]{border-left:2px solid rgba(176,122,255,.4)}
+.blk[data-p="05"]{border-left:2px solid rgba(255,179,64,.4)}
+.blk[data-p="06"]{border-left:2px solid rgba(0,229,160,.4)}
+.blk[data-p="05"]{border-left:2px solid rgba(255,179,64,.4)}
+.blk[data-p="06"]{border-left:2px solid rgba(0,229,160,.4)}
 .blk:hover{transform:scale(1.015) rotate(-0.4deg);box-shadow:var(--shadow);border-color:var(--text3)}
 @keyframes bIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
@@ -325,7 +333,48 @@ html,body{height:100%;width:100%;overflow:hidden}
 .awm .eye{font-size:1rem}
 .awm .ra2{font-family:'Outfit',sans-serif;font-size:.55rem;font-weight:800;letter-spacing:.25em;color:var(--text3)}
 
-/* ── TTS SPEAK BUTTON ── */
+/* ── WARM TRANSFER COLLAPSIBLE ── */
+.wt-note{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 18px;
+  border-radius:12px;
+  background:rgba(176,122,255,.07);
+  border:1px solid rgba(176,122,255,.22);
+  margin-bottom:10px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.72rem;
+  color:var(--text2);
+  line-height:1.5;
+  transition:all .3s;
+}
+.wt-note-ico{font-size:1rem;flex-shrink:0}
+.wt-toggle{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'Fira Code',monospace;font-size:.58rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  background:rgba(176,122,255,.15);
+  border:1px solid rgba(176,122,255,.45);
+  color:var(--D);
+  padding:5px 14px 5px 10px;border-radius:100px;
+  cursor:pointer;transition:all .2s;
+  white-space:nowrap;
+  box-shadow:0 0 0 3px rgba(176,122,255,.08);
+  position:relative;
+}
+.wt-toggle:hover{
+  background:rgba(176,122,255,.28);border-color:var(--D);
+  box-shadow:0 0 0 4px rgba(176,122,255,.15),0 4px 14px rgba(176,122,255,.2);
+  transform:scale(1.03);
+}
+.wt-toggle.open{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.45);color:var(--A);box-shadow:0 0 0 3px rgba(255,77,109,.08)}
+.wt-arrow{
+  display:inline-block;
+  transition:transform .25s cubic-bezier(.34,1.5,.64,1);
+  font-size:.6rem;
+}
+.wt-toggle.open .wt-arrow{transform:rotate(180deg)}
+.wt-body{overflow:hidden;animation:wtIn .3s cubic-bezier(.34,1.2,.64,1)}
+@keyframes wtIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 .tts-bar{
   display:flex;align-items:center;gap:10px;
   padding:9px 16px 9px 14px;
@@ -578,6 +627,13 @@ html,body{height:100%;width:100%;overflow:hidden}
 
       <div class="ph" data-p="03"><span class="phn">03</span><span class="pht">SNS &mdash; Other Braces</span><div class="phl"></div></div>
 
+      <div class="wt-note" style="border-color:rgba(0,229,160,.22);background:rgba(0,229,160,.06)">
+        <span class="wt-note-ico">💡</span>
+        In case the main brace gets rejected — upsell opportunity. Ask about other joints.
+        <button class="wt-toggle" style="background:rgba(0,229,160,.12);border-color:rgba(0,229,160,.35);color:var(--C)" onclick="toggleSNS()"><span class="wt-arrow">▼</span> tap to expand SNS questions</button>
+      </div>
+
+      <div id="SNS-BODY" class="wt-body" style="display:none">
       <div class="blk" data-p="03">
         <div class="bd">
           Just to do it all in one shot &mdash; beside the pain in your lower back
@@ -588,10 +644,18 @@ html,body{height:100%;width:100%;overflow:hidden}
         <div class="tts-bar"><button class="tts-btn" data-tts="Just to do it all in one shot — beside the pain in your lower back — do you feel pain in your KNEES sometimes?... How about your ANKLES when you walk for a while?... Your SHOULDERS or ELBOWS when you move them around?..."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
         <div class="fl fg">&#10003;&nbsp; Copy &amp; Paste SNS Results directly to the Main Form</div>
       </div>
+      </div><!-- /SNS-BODY -->
 
       <div class="ph" data-p="04"><span class="phn">04</span><span class="pht">Warm Transfer</span><div class="phl"></div></div>
 
-      <div class="blk" data-p="04">
+      <div class="wt-note">
+        <span class="wt-note-ico">💡</span>
+        If you need to transfer to the opener/closer,
+        <button class="wt-toggle" onclick="toggleWT()"><span class="wt-arrow">▼</span> tap to expand transfer scripts</button>
+      </div>
+
+      <div id="WT-BODY" class="wt-body" style="display:none">
+        <div class="blk" data-p="04">
         <div class="bd">
           <span class="tn ts" style="margin-left:0;margin-bottom:12px;display:inline-flex">DR CHASING</span><br><br>
           Everything is perfect now <span class="pp"></span>
@@ -633,6 +697,125 @@ html,body{height:100%;width:100%;overflow:hidden}
         <div class="tts-bar"><button class="tts-btn" data-tts="Hi, Verifier Name — I have Patient Name on the line for the support — can you take him? ... Patient Name can you hear me? ... You have Verifier Name — he will help you receive your support — please be patient — say hello now..."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
         <div class="fl fg">&#10003;&nbsp; Leave the 3-way call after hearing them talk together</div>
       </div>
+
+      </div><!-- /WT-BODY -->
+
+      <div class="ph" data-p="05"><span class="phn">05</span><span class="pht">Doctor Info</span><div class="phl"></div></div>
+
+      <div class="blk" data-p="05">
+        <div class="bd">
+          <b>ALRIGHT</b> &mdash; and just to make sure <span class="pp"></span>
+          when was the <b>last time</b> you saw
+          <b>Dr. <span class="sl">Doctor Name</span></b>?
+          <span class="tn th"> Must Answer</span><br><br>
+          And I believe that you have mentioned your
+          <span class="sl">pain area</span> to your Dr <span class="pp"></span>
+          &mdash; <span class="go">CORRECT ?</span>
+          <span class="tn tw">Must be YES</span><br><br>
+          And to make sure everything will be under your Dr&rsquo;s supervision
+          <span class="pp"></span> &mdash; go ahead and confirm your
+          <b>Dr&rsquo;s full name</b> <span class="pp"></span>
+          <span class="tn ts">&#8595; Pause &mdash; give space to answer</span><br><br>
+          And is he in the <b>same state and city</b> as you?
+        </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="Alright — and just to make sure — when was the last time you saw Doctor Name? And I believe that you have mentioned your pain area to your Doctor — Correct? And to make sure everything will be under your Doctor's supervision — go ahead and confirm your Doctor's full name... And is he in the same state and city as you?"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
+        <div class="fl fg">&#10003;&nbsp; Say "ALRIGHT" with energy — it signals a new chapter, keeps them awake</div>
+        <div class="fl fo">&#9654;&nbsp; Slow down on "last time you saw Dr." — sounds caring, not rushed</div>
+        <div class="fl fg">&#10003;&nbsp; "I believe you mentioned it" — you're assuming YES, not asking. Makes it easier for them to confirm</div>
+        <div class="fl fo">&#9654;&nbsp; After asking for Dr's name — go completely silent. Let the silence do the work</div>
+      </div>
+
+      <div class="blk" data-p="05">
+        <div class="bd">
+          Is this doctor your <b>PRIMARY CARE PHYSICIAN</b>?
+          <span class="tn th"> Must Answer</span>
+        </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="Is this doctor your PRIMARY CARE PHYSICIAN?"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
+        <div class="fl fo">&#9654;&nbsp; Ask this casually — like you're just double-checking paperwork, not interrogating</div>
+        <div class="fl fg">&#10003;&nbsp; If they say NO — ask "And who is your primary?" — keep collecting, don't freeze</div>
+      </div>
+
+      <div class="ph" data-p="06"><span class="phn">06</span><span class="pht">Verification &amp; Recap</span><div class="phl"></div></div>
+
+      <div class="blk" data-p="06">
+        <div class="bd">
+          Okay <span class="pp"></span> now I just need to ask you a quick
+          <b>yes-or-no</b> question <span class="pp"></span><br><br>
+          <b>1 &mdash;</b> Are you the <b>decision maker</b> of your health conditions?
+          <span class="tn tw">Must be YES</span><br><br>
+          <b>2 &mdash;</b> Do you have any <b>medical conditions</b> that you are aware of?<br><br>
+          <b>3 &mdash;</b> Did anyone <b>promise you anything</b> other than the braces?
+          <span class="tn tw">Must be NO</span><br><br>
+          <b>4 &mdash;</b> And lastly &mdash; do we have your <b>consent to ship</b> the braces within the upcoming <b>5 to 7 business days</b>?
+          <span class="tn tw">Must be YES</span><br><br>
+          <b>5 &mdash;</b> Do you have any <b>memory loss problems</b> or <b>dementia</b>?
+          <span class="tn tw">Must be NO</span>
+        </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="Okay — now I just need to ask you a quick yes-or-no question. Number one — Are you the decision maker of your health conditions? Number two — Do you have any medical conditions that you are aware of? Number three — Did anyone promise you anything other than the braces? Number four — And lastly — do we have your consent to ship the braces within the upcoming 5 to 7 business days? Number five — Do you have any memory loss problems or dementia?"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
+        <div class="fl fg">&#10003;&nbsp; "Quick yes-or-no" — say this with a smile in your voice. It frames this as easy &amp; fast</div>
+        <div class="fl fo">&#9654;&nbsp; Q1: Confident tone — "You ARE the decision maker, right?" energy. Not a real question</div>
+        <div class="fl fo">&#9654;&nbsp; Q2: Slow slightly — gives them time to think. Any answer is fine, just write it down</div>
+        <div class="fl fr">&#8856;&nbsp; Q3: If they hesitate — calmly repeat: "Did anyone promise you anything EXTRA?" — must be NO</div>
+        <div class="fl fg">&#10003;&nbsp; Q4: "And LASTLY" — this word tells them the finish line is RIGHT HERE. Speeds up their YES</div>
+        <div class="fl fr">&#8856;&nbsp; Q5: Say it gently and fast — don't dwell on it. Just a quick checkbox</div>
+        <div class="fl fg">&#10003;&nbsp; All 5 must be answered before moving to recap</div>
+      </div>
+
+      <div class="blk" data-p="06">
+        <div class="bd">
+          So just to make sure <span class="pp"></span><span class="pp"></span><br><br>
+          Your full name is <span class="sl">&hellip;&hellip;&hellip;</span><br>
+          Your Medicare ID is <span class="sl">&hellip;&hellip;&hellip;</span><br>
+          Your date of birth is <span class="sl">&hellip;&hellip;&hellip;</span><br>
+          And your sizes are <span class="sl">&hellip;&hellip;&hellip;</span><br>
+          And your shipping address is <span class="sl">&hellip;&hellip;&hellip;</span><br>
+          And your Dr is <b>Dr. <span class="sl">&hellip;&hellip;&hellip;</span></b><br><br>
+          <span class="go">CORRECT !! </span>
+          <span class="tn th"> Must Confirm</span>
+        </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="So just to make sure — Your full name is... Your Medicare ID is... Your date of birth is... And your sizes are... And your shipping address is... And your Doctor is Doctor... CORRECT!!"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
+        <div class="fl fo">&#9654;&nbsp; Drop your pace to 60% here — slow recap = professional &amp; reassuring, not suspicious</div>
+        <div class="fl fg">&#10003;&nbsp; Brief pause between each item — let them silently confirm in their head before you say CORRECT</div>
+        <div class="fl fo">&#9654;&nbsp; Say the Dr's name warmly: "and your Doctor is Dr. Smith" — makes them feel taken care of</div>
+        <div class="fl fg">&#10003;&nbsp; "CORRECT!!" at the end — say it with finality. You're closing a contract, not asking a question</div>
+      </div>
+
+      <div class="blk" data-p="06">
+        <div class="bd">
+          Thank you <span class="pp"></span>
+          &mdash; I&rsquo;ll let you enjoy the rest of your day!
+          <span class="tn tw">Warm</span>
+        </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="Thank you — I'll let you enjoy the rest of your day!"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
+        <div class="fl fg">&#10003;&nbsp; Smile while you say this — they can hear it. Ends the call on warmth, not relief</div>
+        <div class="fl fo">&#9654;&nbsp; Don't rush the goodbye — a fast exit sounds like you were hiding something</div>
+      </div>
+
+      <div class="wt-note" style="border-color:rgba(176,122,255,.22);background:rgba(176,122,255,.06);margin-top:10px">
+        <span class="wt-note-ico">💡</span>
+        Only if the patient asks for company info — share name &amp; number.
+        <button class="wt-toggle" style="background:rgba(176,122,255,.12);border-color:rgba(176,122,255,.35);color:var(--D)" onclick="toggleOPT()"><span class="wt-arrow">▼</span> tap to expand company info script</button>
+      </div>
+
+      <div id="OPT-BODY" class="wt-body" style="display:none">
+      <div class="blk" data-p="06">
+        <div class="bd">
+          Alright <span class="pp"></span>
+          &mdash; it&rsquo;s all done now
+          <span class="pp"></span>
+          &mdash; I just need to give you our
+          <b>Company Name</b> and our <b>Phone Number</b>
+          <span class="pp"></span>
+          &mdash; So do you have a <b>paper and a pen</b>?
+          <br><br>
+          Our Company Name is:
+          <b style="color:var(--W);font-size:1rem;letter-spacing:.03em">Liberty Medical Specialties</b>
+        </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="Alright — it's all done now. I just need to give you our Company Name and our Phone Number. So do you have a paper and a pen? Our Company Name is: Liberty Medical Specialties."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
+        <div class="fl fo">&#9654;&nbsp; "Paper and pen?" — short pause after. If they go get one, great. If not, just spell it out slowly</div>
+        <div class="fl fg">&#10003;&nbsp; Spell the company name letter by letter if needed: L-I-B-E-R-T-Y — calm &amp; clear</div>
+      </div>
+      </div><!-- /OPT-BODY -->
 
     </div><!-- /LC -->
 
@@ -873,6 +1056,55 @@ document.addEventListener('click', e => {
 function updateSpdLabels(){
   document.querySelectorAll('.tts-spd-lbl').forEach(l => l.textContent = ttsRate.toFixed(1)+'×');
   if(ttsActiveBtn){ const b = ttsActiveBtn; ttsStop(); setTimeout(()=>ttsPlay(b), 120); }
+}
+
+/* ── COLLAPSIBLE DROPDOWNS ── */
+function makeToggle(bodyId, btnSelector, expandTxt, collapseTxt){
+  const body = document.getElementById(bodyId);
+  const btn  = document.querySelector(btnSelector);
+  if(!body || !btn) return;
+  const open = body.style.display !== 'none';
+  if(open){
+    body.style.display = 'none';
+    btn.classList.remove('open');
+    btn.querySelector('.wt-arrow').insertAdjacentText('afterend', ' ' + expandTxt);
+    btn.childNodes[btn.childNodes.length-1].textContent = ' ' + expandTxt;
+  } else {
+    body.style.display = 'block';
+    btn.classList.add('open');
+  }
+}
+function toggleWT(){
+  const body = document.getElementById('WT-BODY');
+  const btn  = document.querySelector('.wt-toggle[onclick="toggleWT()"]');
+  toggle3(body, btn, 'tap to expand transfer scripts', 'tap to collapse');
+}
+function toggleSNS(){
+  const body = document.getElementById('SNS-BODY');
+  const btn  = document.querySelector('.wt-toggle[onclick="toggleSNS()"]');
+  toggle3(body, btn, 'tap to expand SNS questions', 'tap to collapse');
+}
+function toggleOPT(){
+  const body = document.getElementById('OPT-BODY');
+  const btn  = document.querySelector('.wt-toggle[onclick="toggleOPT()"]');
+  toggle3(body, btn, 'tap to expand company info script', 'tap to collapse');
+}
+function toggle3(body, btn, openLabel, closeLabel){
+  if(!body||!btn) return;
+  const isOpen = body.style.display !== 'none';
+  const arrow = btn.querySelector('.wt-arrow');
+  if(isOpen){
+    body.style.display = 'none';
+    btn.classList.remove('open');
+    btn.lastChild.textContent = ' ' + openLabel;
+  } else {
+    body.style.display = 'block';
+    btn.classList.add('open');
+    btn.lastChild.textContent = ' ' + closeLabel;
+    body.style.animation = 'none';
+    void body.offsetWidth;
+    body.style.animation = 'wtIn .3s cubic-bezier(.34,1.2,.64,1)';
+  }
 }
 </script>
 </body>
