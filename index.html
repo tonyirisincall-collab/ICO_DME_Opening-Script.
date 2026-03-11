@@ -324,6 +324,90 @@ html,body{height:100%;width:100%;overflow:hidden}
 .awm{position:fixed;bottom:14px;right:18px;display:flex;align-items:center;gap:6px;opacity:.08;pointer-events:none;z-index:50;filter:grayscale(.8)}
 .awm .eye{font-size:1rem}
 .awm .ra2{font-family:'Outfit',sans-serif;font-size:.55rem;font-weight:800;letter-spacing:.25em;color:var(--text3)}
+
+/* ── TTS SPEAK BUTTON ── */
+.tts-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 16px 9px 14px;
+  border-top:1px solid var(--border);
+  background:rgba(77,159,255,.04);
+  transition:background .3s;
+}
+.tts-btn{
+  display:flex;align-items:center;gap:7px;
+  padding:6px 14px 6px 10px;
+  border-radius:100px;
+  border:1px solid rgba(77,159,255,.3);
+  background:rgba(77,159,255,.08);
+  color:var(--B);
+  cursor:pointer;
+  font-family:'Fira Code',monospace;
+  font-size:.56rem;
+  font-weight:600;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  transition:all .2s;
+  flex-shrink:0;
+  position:relative;
+  overflow:hidden;
+}
+.tts-btn:hover{background:rgba(77,159,255,.18);border-color:rgba(77,159,255,.6);transform:scale(1.04)}
+.tts-btn.playing{
+  background:rgba(255,77,109,.1);
+  border-color:rgba(255,77,109,.4);
+  color:var(--A);
+  animation:tts-pulse 1.4s ease-in-out infinite;
+}
+.tts-btn.playing .tts-ico{animation:tts-wave 0.6s ease-in-out infinite alternate}
+@keyframes tts-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,77,109,.3)}50%{box-shadow:0 0 0 6px rgba(255,77,109,.0)}}
+@keyframes tts-wave{from{transform:scaleY(1)}to{transform:scaleY(1.4)}}
+.tts-ico{font-size:.85rem;transition:all .2s;display:flex;align-items:center}
+.tts-label{pointer-events:none}
+.tts-speed{
+  display:flex;align-items:center;gap:5px;
+  margin-left:auto;
+  font-family:'Fira Code',monospace;
+  font-size:.52rem;
+  color:var(--text3);
+  letter-spacing:.08em;
+}
+.tts-speed span{color:var(--text2);font-weight:600}
+.tts-spd-btn{
+  width:20px;height:20px;border-radius:5px;
+  border:1px solid var(--border2);
+  background:var(--surface2);
+  color:var(--text3);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;
+  transition:all .15s;
+  flex-shrink:0;
+}
+.tts-spd-btn:hover{border-color:var(--B);color:var(--B);background:rgba(77,159,255,.1)}
+
+/* Word highlight while speaking */
+.tts-word{
+  display:inline;
+  border-radius:3px;
+  padding:0 1px;
+  transition:background .1s, color .1s;
+}
+.tts-word.lit{
+  background:rgba(77,159,255,.28);
+  color:#fff;
+  border-radius:4px;
+  padding:0 3px;
+  outline:1px solid rgba(77,159,255,.4);
+}
+
+/* Rebuttal TTS bar (inside .rp panels) */
+.rp .tts-bar{
+  border-top:none;
+  border-bottom:1px solid var(--border);
+  border-radius:8px;
+  background:rgba(77,159,255,.05);
+  margin-bottom:4px;
+}
 </style>
 </head>
 <body>
@@ -389,6 +473,7 @@ html,body{height:100%;width:100%;overflow:hidden}
           from <b>PATIENT CARE SERVICES</b> <span class="pp"></span>
           &mdash; how are you <span class="sl">PT Name</span>?!
         </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="Hello, Patient Name, you hear me?! This is Agent Name from PATIENT CARE SERVICES — how are you, Patient Name?!"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
         <div class="fl fg">&#10003;&nbsp; Be Responsive &mdash; match their energy immediately</div>
         <div class="rr">
           <button class="rb" data-k="how_info" data-p="01"><div class="rbico">𓂀</div><span class="rblb">How did you get my info?</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Stay calm &amp; credible. Mention "records" &amp; "surveys" — never say "purchased list." Keep moving forward right after.</div></button>
@@ -407,6 +492,7 @@ html,body{height:100%;width:100%;overflow:hidden}
           around your back sometimes <span class="pp"></span>
           &mdash; <span class="go">CORRECT !!</span>
         </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="We're calling you today as you are a MEDICARE HOLDER — because it's mentioned here on your RECORDS that you DO have some slight PAIN or DISCOMFORT around your back sometimes — CORRECT!!"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
         <div class="fl fr">&#8856;&nbsp; NEVER ask about other pain areas here &mdash; back only</div>
         <div class="fl fg">&#10003;&nbsp; Show Empathy &mdash; slow your voice, pause before CORRECT</div>
         <div class="rr">
@@ -425,6 +511,7 @@ html,body{height:100%;width:100%;overflow:hidden}
           and as I can see here you didn&rsquo;t receive it yet <span class="pp"></span>
           &mdash; <span class="go">CORRECT !!</span> <span class="tn tc">Confident</span>
         </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="That's why you're receiving this call today, Patient Name — based on your condition — you're qualified by Medicare to receive the COOLMAX BACK SUPPORT, which will be covered for you by Medicare — and as I can see here you didn't receive it yet — CORRECT!!"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
       </div>
 
       <div class="blk" data-p="01">
@@ -443,6 +530,7 @@ html,body{height:100%;width:100%;overflow:hidden}
           <span class="tn ts">&#8595; Slow</span>
           <span class="tn tw">Warm</span>
         </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="Let me tell you what it looks like as per your Doctor's recommendation — It's a PROTECTIVE SOFT BELT around your pain area — with NO metal parts — made of FLEXIBLE and BREATHABLE MEDICAL FIBERS called COOLMAX — keeps your pain area dry all the time, doesn't sweat even when worn for a long time. Wear it for a couple of minutes whenever you feel the pain — aligns the spine, reduces disc pressure — So I got your Name is... CORRECT!!"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
       </div>
 
       <div class="ph" data-p="02"><span class="phn">02</span><span class="pht">Sizing &amp; Eligibility</span><div class="phl"></div></div>
@@ -458,6 +546,7 @@ html,body{height:100%;width:100%;overflow:hidden}
           To make sure the support fits you perfectly <span class="pp"></span><br>
           <b>How much do you Weigh and how Tall are you?!</b>
         </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="By the way, Patient Name — it may also be made of SYNTHETIC RUBBER called NEOPRENE — corrects your posture, makes you feel like you have extra muscles in your pain area — improves blood circulation, hidden under clothes. To make sure the support fits you perfectly — How much do you Weigh and how Tall are you?!"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
         <div class="fl fr">&#8856;&nbsp; Do NOT push for other pain areas here</div>
         <div class="rr">
           <button class="rb" data-k="refuse_sizes" data-p="02"><div class="rbico">𓂀</div><span class="rblb">Refuses to give sizes</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Frame it as "we need the right SIZE, not personal info." Say roughly — removes pressure. Objection here = still listening.</div></button>
@@ -478,6 +567,7 @@ html,body{height:100%;width:100%;overflow:hidden}
           From <b>ONE to TEN</b> <span class="pp"></span>
           &mdash; how much do you rate your pain at its worst?
         </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="It suits a wide range of body types — stretchable, will NOT get tight or loose. Everything is perfect on my system — shipping and handling fees covered as well. Date Of Birth... correct? Shipping Address... correct? Best phone number... right? From ONE to TEN — how much do you rate your pain at its worst?"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
         <div class="rr">
           <button class="rb" data-k="no_info_phone" data-p="02"><div class="rbico">𓂀</div><span class="rblb">Won&rsquo;t give info over phone</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Validate their caution first — then separate Medicare ID from "personal info." Hospital/pharmacy analogy is very effective.</div></button>
           <button class="rb" data-k="scammed_before" data-p="02"><div class="rbico">𓂀</div><span class="rblb">I was scammed before</span><div class="rbtip"><div class="tipttl">Sales Tip</div>Empathize hard — this is emotional. Agree with caution, then draw a clear line: SSN = never, Medicare ID = safe &amp; medical only.</div></button>
@@ -495,6 +585,7 @@ html,body{height:100%;width:100%;overflow:hidden}
           How about your <b>ANKLES</b> when you walk for a while?&hellip;<br>
           Your <b>SHOULDERS or ELBOWS</b> when you move them around?&hellip;
         </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="Just to do it all in one shot — beside the pain in your lower back — do you feel pain in your KNEES sometimes?... How about your ANKLES when you walk for a while?... Your SHOULDERS or ELBOWS when you move them around?..."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
         <div class="fl fg">&#10003;&nbsp; Copy &amp; Paste SNS Results directly to the Main Form</div>
       </div>
 
@@ -510,6 +601,7 @@ html,body{height:100%;width:100%;overflow:hidden}
           &mdash; <span class="go">HOLD ON ONE MOMENT&hellip;</span>
           <span class="tn ts">&#8595; Slowly</span>
         </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="Everything is perfect now — I'll let you speak to the verification team — they'll verify YOUR INFORMATION and tell you when you'll receive your support — HOLD ON ONE MOMENT..."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
         <div class="fl fo">!&nbsp; Never be silent &mdash; keep talking during the transfer</div>
       </div>
 
@@ -523,6 +615,7 @@ html,body{height:100%;width:100%;overflow:hidden}
           &mdash; whole process is <b>5&ndash;7 mins MAX</b> <span class="pp"></span>
           &mdash; please be patient &mdash; <span class="go">HOLD ON ONE MOMENT&hellip;</span>
         </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="Everything is perfect now — I'll let you speak to the verification team — they'll verify some SIMPLE MEDICAL QUESTIONS then transfer you to the shipping team — whole process is 5 to 7 minutes MAX — please be patient — HOLD ON ONE MOMENT..."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
       </div>
 
       <div class="blk" data-p="04">
@@ -537,6 +630,7 @@ html,body{height:100%;width:100%;overflow:hidden}
           your support <span class="pp"></span>
           &mdash; please be patient &mdash; say hello now&hellip;
         </div>
+        <div class="tts-bar"><button class="tts-btn" data-tts="Hi, Verifier Name — I have Patient Name on the line for the support — can you take him? ... Patient Name can you hear me? ... You have Verifier Name — he will help you receive your support — please be patient — say hello now..."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div>
         <div class="fl fg">&#10003;&nbsp; Leave the 3-way call after hearing them talk together</div>
       </div>
 
@@ -557,31 +651,31 @@ html,body{height:100%;width:100%;overflow:hidden}
           <p>Click any card button in the script</p>
         </div>
 
-        <div class="rp" id="rp-how_info"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"How did you get my information?"</div></div><div class="rdv"></div><div class="ra"><span class="sl">PT Name</span>, it&rsquo;s been obtained through different sources such as phone surveys and so on &mdash; that&rsquo;s why we got the medical information for most seniors who are insured under Medicare and might be having some joint pain&hellip; just the way you are&hellip; <i>(as I was saying)</i>.</div></div>
+        <div class="rp" id="rp-how_info"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"How did you get my information?"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="Patient Name, it's been obtained through different sources such as phone surveys and so on — that's why we got the medical information for most seniors who are insured under Medicare and might be having some joint pain — just the way you are — as I was saying."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra"><span class="sl">PT Name</span>, it&rsquo;s been obtained through different sources such as phone surveys and so on &mdash; that&rsquo;s why we got the medical information for most seniors who are insured under Medicare and might be having some joint pain&hellip; just the way you are&hellip; <i>(as I was saying)</i>.</div></div>
 
-        <div class="rp" id="rp-why_calling"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Why are you calling me?"</div></div><div class="rdv"></div><div class="ra">As we mentioned before, we&rsquo;re calling today to update you with your benefits &mdash; as you are entitled to receive them from Medicare.</div></div>
+        <div class="rp" id="rp-why_calling"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Why are you calling me?"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="As we mentioned before, we're calling today to update you with your benefits — as you are entitled to receive them from Medicare."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra">As we mentioned before, we&rsquo;re calling today to update you with your benefits &mdash; as you are entitled to receive them from Medicare.</div></div>
 
-        <div class="rp" id="rp-medicare_assoc"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Are you associated with Medicare?"</div></div><div class="rdv"></div><div class="ra">Absolutely, we&rsquo;re <b>NOT</b> associated with Medicare &mdash; we help seniors over the phone who have pain in their joints to receive their benefits <i>from</i> Medicare. That&rsquo;s exactly why we&rsquo;re calling you today since you have this pain in <span class="sl">PAIN AREA</span>&hellip; <i>CORRECT !!</i></div></div>
+        <div class="rp" id="rp-medicare_assoc"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Are you associated with Medicare?"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="Absolutely, we're NOT associated with Medicare — we help seniors over the phone who have pain in their joints to receive their benefits FROM Medicare. That's exactly why we're calling you today since you have this pain in your pain area — CORRECT!!"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra">Absolutely, we&rsquo;re <b>NOT</b> associated with Medicare &mdash; we help seniors over the phone who have pain in their joints to receive their benefits <i>from</i> Medicare. That&rsquo;s exactly why we&rsquo;re calling you today since you have this pain in <span class="sl">PAIN AREA</span>&hellip; <i>CORRECT !!</i></div></div>
 
-        <div class="rp" id="rp-not_interested"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Not interested / Sales call?"</div></div><div class="rdv"></div><div class="ra">We are <b>NOT</b> selling you anything. It&rsquo;s just a <b>free service call</b> according to your health insurance&rsquo;s benefits &mdash; as you are a Medicare holder, <i>Correct!</i></div></div>
+        <div class="rp" id="rp-not_interested"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Not interested / Sales call?"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="We are NOT selling you anything. It's just a free service call according to your health insurance's benefits — as you are a Medicare holder, Correct!"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra">We are <b>NOT</b> selling you anything. It&rsquo;s just a <b>free service call</b> according to your health insurance&rsquo;s benefits &mdash; as you are a Medicare holder, <i>Correct!</i></div></div>
 
-        <div class="rp" id="rp-no_pain"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I don&rsquo;t have any pain"</div></div><div class="rdv"></div><div class="ra">I&rsquo;m <b>NOT</b> talking about severe pain &mdash; I mean the slight pain that comes and goes, the usual one we all feel when doing extra effort or when the weather gets cold&hellip; I&rsquo;m sure you feel it sometimes, <i>Right!</i><span class="opt">&mdash; Still No Pain?</span>Ohhh, that&rsquo;s why I can see you receive many calls every day by different people asking the same thing, <i>Correct!</i>&hellip;<br><br>Let me modify it in our system so you will <b>NOT</b> be called again&hellip; Just one moment&hellip; So you&rsquo;re saying you have <b>absolutely no pain</b> in your back, <i>Correct?!</i><br><br><span style="color:var(--text3);font-style:italic">(as if talking to yourself)</span> &mdash; how about your <b>Knees</b>?&hellip; your <b>Ankles</b> when walking?&hellip; your <b>Wrists</b> while washing dishes?&hellip; your <b>Elbows or Shoulders</b>?</div><div class="rn rng">Write every new pain area in the comment for colleagues</div></div>
+        <div class="rp" id="rp-no_pain"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I don&rsquo;t have any pain"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="I'm NOT talking about severe pain — I mean the slight pain that comes and goes, the usual one we all feel when doing extra effort or when the weather gets cold — I'm sure you feel it sometimes, Right! ... Ohhh, that's why I can see you receive many calls every day by different people asking the same thing, Correct! Let me modify it in our system so you will NOT be called again — Just one moment — So you're saying you have absolutely no pain in your back, Correct?! How about your Knees?... your Ankles when walking?... your Wrists while washing dishes?... your Elbows or Shoulders?"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra">I&rsquo;m <b>NOT</b> talking about severe pain &mdash; I mean the slight pain that comes and goes, the usual one we all feel when doing extra effort or when the weather gets cold&hellip; I&rsquo;m sure you feel it sometimes, <i>Right!</i><span class="opt">&mdash; Still No Pain?</span>Ohhh, that&rsquo;s why I can see you receive many calls every day by different people asking the same thing, <i>Correct!</i>&hellip;<br><br>Let me modify it in our system so you will <b>NOT</b> be called again&hellip; Just one moment&hellip; So you&rsquo;re saying you have <b>absolutely no pain</b> in your back, <i>Correct?!</i><br><br><span style="color:var(--text3);font-style:italic">(as if talking to yourself)</span> &mdash; how about your <b>Knees</b>?&hellip; your <b>Ankles</b> when walking?&hellip; your <b>Wrists</b> while washing dishes?&hellip; your <b>Elbows or Shoulders</b>?</div><div class="rn rng">Write every new pain area in the comment for colleagues</div></div>
 
-        <div class="rp" id="rp-where_located"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Where are you located?"</div></div><div class="rdv"></div><div class="ra">We&rsquo;re an <b>offshore company</b> that moves fast from state to state over the phone to cover all states&hellip; Since we&rsquo;re in 2024 it&rsquo;s a lot faster over the phone&hellip; <i>(as I was saying)</i>.</div><div class="rn rno">Only if patient insists &mdash; you may say HQ is in Egypt</div></div>
+        <div class="rp" id="rp-where_located"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Where are you located?"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="We're an offshore company that moves fast from state to state over the phone to cover all states — Since we're in 2024 it's a lot faster over the phone — as I was saying."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra">We&rsquo;re an <b>offshore company</b> that moves fast from state to state over the phone to cover all states&hellip; Since we&rsquo;re in 2024 it&rsquo;s a lot faster over the phone&hellip; <i>(as I was saying)</i>.</div><div class="rn rno">Only if patient insists &mdash; you may say HQ is in Egypt</div></div>
 
-        <div class="rp" id="rp-refuse_sizes"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Refuses to give sizes"</div></div><div class="rdv"></div><div class="ra">We&rsquo;re <b>NOT</b> even allowed to ask personal questions &mdash; we already have your basic info. We&rsquo;re simply adding your sizes so we can send you the <b>right support</b> to your doorstep.<br><br>So, <i>roughly</i> &mdash; how much do you Weigh and how Tall are you?!</div><div class="rn rng">Ask about Shoe Size if PT needs Ankles support</div></div>
+        <div class="rp" id="rp-refuse_sizes"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"Refuses to give sizes"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="We're NOT even allowed to ask personal questions — we already have your basic info. We're simply adding your sizes so we can send you the right support to your doorstep. So, roughly — how much do you Weigh and how Tall are you?!"><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra">We&rsquo;re <b>NOT</b> even allowed to ask personal questions &mdash; we already have your basic info. We&rsquo;re simply adding your sizes so we can send you the <b>right support</b> to your doorstep.<br><br>So, <i>roughly</i> &mdash; how much do you Weigh and how Tall are you?!</div><div class="rn rng">Ask about Shoe Size if PT needs Ankles support</div></div>
 
-        <div class="rp" id="rp-if_free_send"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"If it&rsquo;s free, just send it"</div></div><div class="rdv"></div><div class="ra">It&rsquo;s <b>covered for you</b> by your Medicare health insurance &mdash; as you have Part A and Part B active. Even the shipping and handling fees are all covered as well.</div></div>
+        <div class="rp" id="rp-if_free_send"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"If it&rsquo;s free, just send it"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="It's covered for you by your Medicare health insurance — as you have Part A and Part B active. Even the shipping and handling fees are all covered as well."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra">It&rsquo;s <b>covered for you</b> by your Medicare health insurance &mdash; as you have Part A and Part B active. Even the shipping and handling fees are all covered as well.</div></div>
 
-        <div class="rp" id="rp-how_much_cost"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"How much does it cost?"</div></div><div class="rdv"></div><div class="ra">Sir, the supports are <b>NOT free nor for sale</b> &mdash; there&rsquo;s no price list. It&rsquo;s part of your <b>benefits</b> as a Medicare senior. You&rsquo;re qualified to get them covered with <b>no delivery fees</b>.</div></div>
+        <div class="rp" id="rp-how_much_cost"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"How much does it cost?"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="Sir, the supports are NOT free nor for sale — there's no price list. It's part of your benefits as a Medicare senior. You're qualified to get them covered with no delivery fees."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra">Sir, the supports are <b>NOT free nor for sale</b> &mdash; there&rsquo;s no price list. It&rsquo;s part of your <b>benefits</b> as a Medicare senior. You&rsquo;re qualified to get them covered with <b>no delivery fees</b>.</div></div>
 
-        <div class="rp" id="rp-already_doctor"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I already have a doctor"</div></div><div class="rdv"></div><div class="ra">Absolutely &mdash; most seniors have doctors too. But this support will <b>NOT cause any allergies</b>, nor side effects like painkillers or over-the-counter medications.<br><br>However, according to <b>HIPAA law</b>, we <b>CANNOT</b> send you anything unless a Licensed or Primary doctor approves it.</div></div>
+        <div class="rp" id="rp-already_doctor"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I already have a doctor"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="Absolutely — most seniors have doctors too. But this support will NOT cause any allergies, nor side effects like painkillers or over-the-counter medications. However, according to HIPAA law, we CANNOT send you anything unless a Licensed or Primary doctor approves it."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra">Absolutely &mdash; most seniors have doctors too. But this support will <b>NOT cause any allergies</b>, nor side effects like painkillers or over-the-counter medications.<br><br>However, according to <b>HIPAA law</b>, we <b>CANNOT</b> send you anything unless a Licensed or Primary doctor approves it.</div></div>
 
-        <div class="rp" id="rp-dont_need_it"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I don&rsquo;t need it"</div></div><div class="rdv"></div><div class="ra">Actually this is your <b>covered benefit</b> &mdash; through your medical health insurance that you&rsquo;ve been paying for. You&rsquo;re entitled to receive it <b>once every five years</b>&hellip; to support your spine against sliding or slipping.<br><br>And you don&rsquo;t have to wear it all day &mdash; just <b>15 to 30 minutes</b> whenever you feel the pain.</div></div>
+        <div class="rp" id="rp-dont_need_it"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I don&rsquo;t need it"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="Actually this is your covered benefit — through your medical health insurance that you've been paying for. You're entitled to receive it once every five years — to support your spine against sliding or slipping. And you don't have to wear it all day — just 15 to 30 minutes whenever you feel the pain."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra">Actually this is your <b>covered benefit</b> &mdash; through your medical health insurance that you&rsquo;ve been paying for. You&rsquo;re entitled to receive it <b>once every five years</b>&hellip; to support your spine against sliding or slipping.<br><br>And you don&rsquo;t have to wear it all day &mdash; just <b>15 to 30 minutes</b> whenever you feel the pain.</div></div>
 
-        <div class="rp" id="rp-no_info_phone"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I don&rsquo;t give info over the phone!!"</div></div><div class="rdv"></div><div class="ra"><span class="opt">&mdash; Option 1</span>Absolutely &mdash; always be cautious. But we&rsquo;re <b>NOT</b> asking for personal info &mdash; we&rsquo;re just <i>confirming</i> your basic info to make sure I&rsquo;m speaking to the primary cardholder. Please confirm your Medicare ID number from left to right.<span class="opt">&mdash; Option 2</span>Your Medicare claim number is just your <i>identification number</i> &mdash; an 11-character mix of letters and numbers &mdash; <b>nothing to do</b> with personal or financial info. That&rsquo;s why Medicare changed old cards (with SSN) to new ones&hellip;<span class="opt">&mdash; Option 3</span><span class="sl">Customer Name</span> I understand. However, we&rsquo;re on an irregular line &mdash; all calls are <b>monitored and recorded</b> for your security. No financial or banking info ever discussed.<span class="opt">&mdash; Option 4</span>When you go to a hospital or pharmacy you show your Medicare card, <i>Right?!</i>&hellip; Same here &mdash; we only identify you on Medicare to confirm you&rsquo;re qualified and eligible.</div></div>
+        <div class="rp" id="rp-no_info_phone"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I don&rsquo;t give info over the phone!!"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="Absolutely — always be cautious. But we're NOT asking for personal info — we're just confirming your basic info to make sure I'm speaking to the primary cardholder. Please confirm your Medicare ID number from left to right. ... Your Medicare claim number is just your identification number — an 11-character mix of letters and numbers — nothing to do with personal or financial info. That's why Medicare changed old cards with SSN to new ones. ... All calls are monitored and recorded for your security. No financial or banking info ever discussed. ... When you go to a hospital or pharmacy you show your Medicare card, Right? Same here — we only identify you on Medicare to confirm you're qualified and eligible."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra"><span class="opt">&mdash; Option 1</span>Absolutely &mdash; always be cautious. But we&rsquo;re <b>NOT</b> asking for personal info &mdash; we&rsquo;re just <i>confirming</i> your basic info to make sure I&rsquo;m speaking to the primary cardholder. Please confirm your Medicare ID number from left to right.<span class="opt">&mdash; Option 2</span>Your Medicare claim number is just your <i>identification number</i> &mdash; an 11-character mix of letters and numbers &mdash; <b>nothing to do</b> with personal or financial info. That&rsquo;s why Medicare changed old cards (with SSN) to new ones&hellip;<span class="opt">&mdash; Option 3</span><span class="sl">Customer Name</span> I understand. However, we&rsquo;re on an irregular line &mdash; all calls are <b>monitored and recorded</b> for your security. No financial or banking info ever discussed.<span class="opt">&mdash; Option 4</span>When you go to a hospital or pharmacy you show your Medicare card, <i>Right?!</i>&hellip; Same here &mdash; we only identify you on Medicare to confirm you&rsquo;re qualified and eligible.</div></div>
 
-        <div class="rp" id="rp-scammed_before"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I was scammed before"</div></div><div class="rdv"></div><div class="ra">I totally understand &mdash; most seniors have been scammed too, and I&rsquo;m telling you right now &mdash; <b>never</b> give your <i>social security number</i> over the phone to anyone for any reason.<br><br>But the <b>new Medicare ID number</b> is only related to your <i>medical benefits</i>&hellip; It became easier for all seniors to receive their annual benefits over the phone&hellip; take your time and confirm it please.</div></div>
+        <div class="rp" id="rp-scammed_before"><div class="rcr"><button class="rcls" onclick="closeRb()">close</button></div><div><div class="rql">Rebuttal</div><div class="rqt">"I was scammed before"</div></div><div class="rdv"></div><div class="tts-bar"><button class="tts-btn" data-tts="I totally understand — most seniors have been scammed too, and I'm telling you right now — never give your social security number over the phone to anyone for any reason. But the new Medicare ID number is only related to your medical benefits — It became easier for all seniors to receive their annual benefits over the phone — take your time and confirm it please."><span class="tts-ico">▶</span><span class="tts-label">Listen</span></button><div class="tts-speed"><button class="tts-spd-btn tts-dn">−</button><span class="tts-spd-lbl">0.8×</span><button class="tts-spd-btn tts-up">+</button></div></div><div class="ra">I totally understand &mdash; most seniors have been scammed too, and I&rsquo;m telling you right now &mdash; <b>never</b> give your <i>social security number</i> over the phone to anyone for any reason.<br><br>But the <b>new Medicare ID number</b> is only related to your <i>medical benefits</i>&hellip; It became easier for all seniors to receive their annual benefits over the phone&hellip; take your time and confirm it please.</div></div>
 
       </div>
     </div><!-- /RC -->
@@ -671,6 +765,115 @@ document.getElementById('tg').addEventListener('click', ()=>{
   ti.textContent = dark ? '🌙' : '☀️';
   try{ localStorage.setItem('dme-t', dark?'dark':'light'); }catch(e){}
 });
+
+/* ─────────────────────────────────────────────
+   TTS ENGINE — Practice Mode
+   ─────────────────────────────────────────────*/
+let ttsRate = 0.8;
+let ttsActiveBtn = null;
+
+function ttsGetVoice(){
+  const voices = speechSynthesis.getVoices();
+  const preferred = ['Google US English','Microsoft David - English','Microsoft Zira - English','Alex','Samantha','Karen','Daniel'];
+  for(const p of preferred){
+    const v = voices.find(v => v.name.includes(p));
+    if(v) return v;
+  }
+  return voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang.startsWith('en')) || null;
+}
+
+function ttsStop(){
+  speechSynthesis.cancel();
+  if(ttsActiveBtn){
+    ttsActiveBtn.classList.remove('playing');
+    ttsActiveBtn.querySelector('.tts-ico').textContent = '▶';
+    ttsActiveBtn.querySelector('.tts-label').textContent = 'Listen';
+    ttsActiveBtn = null;
+  }
+}
+
+function ttsPlay(btn){
+  const text = btn.dataset.tts;
+  if(!text) return;
+  if(ttsActiveBtn === btn){ ttsStop(); return; }
+  ttsStop();
+  wrapWords(btn);
+
+  const words = text.split(/\s+/);
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate   = ttsRate;
+  utt.pitch  = 1.05;
+  utt.volume = 1;
+
+  const applyVoice = () => { const v = ttsGetVoice(); if(v) utt.voice = v; };
+  if(speechSynthesis.getVoices().length > 0){ applyVoice(); }
+  else { speechSynthesis.addEventListener('voiceschanged', applyVoice, {once:true}); }
+
+  utt.onboundary = (e) => {
+    if(e.name !== 'word') return;
+    const panel = btn.closest('.tts-bar').parentElement;
+    const spans = panel.querySelectorAll('.tts-word');
+    spans.forEach(s => s.classList.remove('lit'));
+    let count = 0;
+    for(let i = 0; i < words.length; i++){
+      if(count >= e.charIndex){ if(spans[i]) spans[i].classList.add('lit'); break; }
+      count += words[i].length + 1;
+    }
+  };
+  utt.onstart = () => {
+    btn.classList.add('playing');
+    btn.querySelector('.tts-ico').textContent = '■';
+    btn.querySelector('.tts-label').textContent = 'Stop';
+    ttsActiveBtn = btn;
+  };
+  const onDone = () => {
+    btn.classList.remove('playing');
+    btn.querySelector('.tts-ico').textContent = '▶';
+    btn.querySelector('.tts-label').textContent = 'Listen';
+    if(ttsActiveBtn === btn) ttsActiveBtn = null;
+    const panel = btn.closest('.tts-bar').parentElement;
+    panel.querySelectorAll('.tts-word').forEach(s => s.classList.remove('lit'));
+  };
+  utt.onend = onDone;
+  utt.onerror = onDone;
+
+  speechSynthesis.speak(utt);
+}
+
+function wrapWords(btn){
+  const panel = btn.closest('.tts-bar').parentElement;
+  panel.querySelectorAll('.ra, .bd').forEach(el => {
+    if(el.dataset.wrapped) return;
+    el.dataset.wrapped = '1';
+    const walk = node => {
+      if(node.nodeType === 3){
+        const frag = document.createDocumentFragment();
+        node.textContent.split(/(\s+)/).forEach(p => {
+          if(/^\s+$/.test(p)){ frag.appendChild(document.createTextNode(p)); }
+          else if(p.length){ const s = document.createElement('span'); s.className='tts-word'; s.textContent=p; frag.appendChild(s); }
+        });
+        node.parentNode.replaceChild(frag, node);
+      } else if(node.nodeType===1 && !['SCRIPT','STYLE'].includes(node.tagName)){
+        Array.from(node.childNodes).forEach(walk);
+      }
+    };
+    Array.from(el.childNodes).forEach(walk);
+  });
+}
+
+document.addEventListener('click', e => {
+  const playBtn = e.target.closest('.tts-btn[data-tts]');
+  if(playBtn){ e.stopPropagation(); ttsPlay(playBtn); return; }
+  const dn = e.target.closest('.tts-dn');
+  if(dn){ e.stopPropagation(); ttsRate = Math.max(0.5, +(ttsRate-0.1).toFixed(1)); updateSpdLabels(); return; }
+  const up = e.target.closest('.tts-up');
+  if(up){ e.stopPropagation(); ttsRate = Math.min(1.5, +(ttsRate+0.1).toFixed(1)); updateSpdLabels(); return; }
+});
+
+function updateSpdLabels(){
+  document.querySelectorAll('.tts-spd-lbl').forEach(l => l.textContent = ttsRate.toFixed(1)+'×');
+  if(ttsActiveBtn){ const b = ttsActiveBtn; ttsStop(); setTimeout(()=>ttsPlay(b), 120); }
+}
 </script>
 </body>
 </html>
